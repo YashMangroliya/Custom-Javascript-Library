@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>AJAX Ecample</title>
+<script>
+function getDesignation()
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+responseData=this.responseText;
+alert(responseData);
+var designation=document.getElementById("title");
+if(responseData!="INVALID")
+{
+var designationDTO=JSON.parse(responseData);
+designation.innerHTML=designationDTO.title;
+}
+else
+{
+designation.innerHTML="Invalid";
+}
+}
+else
+{
+alert('Some Problem');
+}
+}
+
+}
+
+var code=document.getElementById("code").value;
+requestURL="servletTwo?code="+encodeURI(code);
+xmlHttpRequest.open('GET',requestURL,true);
+xmlHttpRequest.send();
+}
+</script>
+</head>
+<body>
+<h2>Get type example with data</h2>
+Enter code: <input type='text' id='code'>
+<button type='button' onclick='getDesignation()'>Get Designation</button> <br>
+title: <span id='title'></span>
+</body>
+</html>

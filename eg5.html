@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Ecample</title>
+<script>
+function $$$(cid){
+let element=document.getElementById(cid);
+if(!element) throw "Invalid id: "+cid;
+return new TMJRockElement(element);
+};
+
+function TMJRockElement(element){
+this.element=element;
+this.html=function(content){
+if(typeof this.element.innerHTML=="string")
+{
+if(typeof content=="string")
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+} 	
+return null;
+}
+this.value=function(content){
+if(typeof this.element.value)
+{
+if(content)
+{
+this.element.value=content;
+}
+return this.element.value;
+}
+return null;
+}
+
+this.fillComboBox=function(jsonObject){
+if((this.element.nodeName)!="SELECT") throw "fillComboBox can be called on a SELECT type object only";
+
+let dataSource=jsonObject["dataSource"];
+if(!dataSource) throw "dataSorce property should exist in call to ajax";
+if(!(dataSource instanceof Array)) throw "Value of dataSource property should be of collection type";
+if(dataSource.length==0) throw "Length of collection against dataSource property can not be 0";
+
+let text=jsonObject["text"];
+if(!text) throw "text property should exist in call to ajax";
+if((typeof text)!="string") throw "text property should be string of type in call to ajax";
+if(!dataSource[0][text]) throw "value of text property should exist as a property in elements of collection against dataSource property";
+
+let value=jsonObject["value"]; 
+if(!value) throw "value propety should exist in call to ajax";
+if((typeof value)!="string") throw "value property should be of string type in call to ajax";
+if(!dataSource[0][value]) throw "value of value property should exist as a property in elements of collection against dataSource property";
+
+let length=this.element.length;
+for(let i=length-1;i>=0;i--)
+{
+this.element.remove(i);
+}
+
+let firstOption=jsonObject["firstOption"];
+if(firstOption)
+{
+let firstOptionText=firstOption["text"];
+if(!firstOptionText) throw "text property should exist in json against firstOption property in call to ajax";
+if((typeof firstOptionText)!="string") throw "text property in json object against firstOption property should be of string type in call to ajax";
+
+let firstOptionValue=firstOption["value"];
+if(!firstOptionValue) throw "Value property should exist in json against firstOption property in call to ajax";
+if((typeof firstOptionValue)!="string") throw "Value property in json object against firstOption property should be of string type in call to ajax";
+
+let obj=document.createElement('option');
+obj.text=firstOptionText;
+obj.value=firstOptionValue;
+this.element.appendChild(obj)
+}
+
+length=dataSource.length;
+for(let i=0;i<length;i++)
+{
+obj=document.createElement('option');
+obj.text=dataSource[i][text];
+obj.value=dataSource[i][value];
+this.element.appendChild(obj);
+}
+
+}// fillComboBox ends here
+
+}
+
+
+$$$.ajax=function(jsonObject){
+if(!jsonObject["url"]) throw "url property is missing in call to ajax";
+let url=jsonObject["url"];
+if((typeof url)!="string") throw "url property should be of string type in call to ajax";
+
+let methodType="GET";
+if(jsonObject["methodType"])
+{
+methodType=jsonObject["methodType"];
+if(typeof methodType!="string") throw "methodType property should be of string type in call to ajax";
+methodType=methodType.toUpperCase();
+if(!["POST","GET"].includes(methodType)) throw "methodType should be GET/POST in call to ajax";
+}
+
+let onSuccess=null;
+if(jsonObject["success"])
+{
+onSuccess=jsonObject["success"];
+if((typeof onSuccess)!="function") throw "value of success property must be of function type in call to ajax";
+}
+
+let onFailure=null;
+if(jsonObject["failure"])
+{
+onFailure=jsonObject["failure"];
+if((typeof onFailure)!="function") throw "value of failure property must be of function type in call to ajax";
+}
+
+if(methodType=="GET")
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData=this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
+// we will change the code to traverse the json object
+if(jsonObject["data"])
+{
+let jsonData=jsonObject["data"];
+let queryString="";
+let i=0;
+for(key in jsonData)
+{
+if(i==0)queryString+="?";
+if(i>0) queryString+="&";
+i++;
+queryString=queryString+encodeURI(key)+"="+encodeURI(jsonData[key]);
+}
+url+=queryString;
+alert(url);
+}
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+}
+if(methodType=="POST")
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData=this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
+// we will change the code to traverse the json object
+
+if(jsonObject["data"])
+{
+let sendJSON=jsonObject["sendJSON"];
+if((typeof sendJSON)!="boolean") throw "sendJSON property should be of boolean type in call to ajax";
+if(!sendJSON) sendJSON=false;
+if(sendJSON)
+{
+let jsonData={};
+jsonData=jsonObject["data"];
+xmlHttpRequest.open('POST',url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(jsonData));
+}
+else
+{
+let jsonData=jsonObject["data"];
+let queryString="";
+let i=0;
+for(key in data)
+{
+if(i>0) queryString+="&";
+i++;
+queryString=queryString+encodeURI(key)+"="+encodeURI(data[key]);
+}
+xmlHttpRequest.open('POST',url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","? f??????????????????");
+xmlHttpRequest.send(queryString);
+}
+}
+
+}
+}
+//TMJRock part ends here
+
+
+
+function populateDesignations()
+{
+$$$.ajax({
+"url": "servletOne",
+"methodType": "GET",
+"success": function(responseData){
+var designations=JSON.parse(responseData);
+$$$("designationsComboBox").fillComboBox({
+"dataSource": designations,
+"text":"title",
+"value":"code",
+"firstOption":{
+"text":"<select designation>",
+"value":"-1"
+}
+});
+},
+"failure": function(){
+alert('Some Problem');
+}
+});
+}
+window.addEventListener('load',populateDesignations);
+</script>
+</head>
+<body>
+<h2>Get type example</h2>
+<select id='designationsComboBox'>
+<option>YES</option>
+<option>NO</option>
+</select>
+</body>
+</html>

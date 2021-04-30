@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Example</title>
+<script>
+//TMJRock part starts here
+var expandedIndex=-1;
+var panels=[];
+function accordianHeadingClicked(x)
+{
+if(expandedIndex!=-1) panels[expandedIndex].style.display='none';
+panels[x+1].style.display=panels[x+1].oldDisplay;
+expandedIndex=x+1;
+}
+function doit()
+{
+let accord=document.getElementById("mymy");
+var childrens=accord.childNodes;
+let x;
+for(x=0;x<childrens.length;x++)
+{
+if(childrens[x].nodeName=="H3")
+{
+panels[panels.length]=childrens[x];
+}
+if(childrens[x].nodeName=="DIV")
+{
+panels[panels.length]=childrens[x];
+}
+}
+if(panels.length%2!=0) throw "Heading and division malformed to create accordian";
+for(x=0;x<panels.length;x+=2)
+{
+if(panels[x].nodeName!="H3") throw "Heading and division malformed to create accordian";
+if(panels[x+1].nodeName!="DIV") throw "Exception in serial in DIV";
+}
+function createClickHandler(i)
+{
+return function(){
+accordianHeadingClicked(i);
+};
+}
+for(x=0;x<panels.length;x+=2)
+{
+panels[x].onclick=createClickHandler(x);
+panels[x+1].oldDisplay=panels[x+1].style.display;
+panels[x+1].style.display="none";
+}
+}
+//TMJRock part ends here
+window.addEventListener('load',doit);
+</script>
+</head>
+<body>
+<div id='mymy'>
+<h3>Heading1</h3>
+<div>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+</div>
+<h3>Heading2</h3>
+<div>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+</div>
+<h3>Heading3</h3>
+<div>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+</div>
+</div>
+</body>
+</html>

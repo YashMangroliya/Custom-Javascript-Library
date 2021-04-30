@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Ecample</title>
+<script>
+function $$$(cid){
+var element=document.getElementById(cid);
+var elementType=element.type;
+if(elementType=="select-one")
+{
+return {
+"fillComboBox":function(dict){
+var obj;
+var dataSource=dict.dataSource
+if(dict.firstOption!=null)
+{
+obj=document.createElement('option');
+obj.value=dict.firstOption.value;
+obj.text=dict.firstOption.text;
+element.appendChild(obj);
+}
+var text=dict.text;
+var value=dict.value;
+for(var i=1;i<dataSource.length;i++)
+{
+obj=document.createElement('option');
+obj.text=dataSource[i][text];
+obj.value=dataSource[i][value];
+element.appendChild(obj);
+}
+}
+};
+}
+}
+
+
+$$$.ajax=function(jsonObject){
+if(!jsonObject["url"]) throw "url property is missing in call to ajax";
+let url=jsonObject["url"];
+if((typeof url)!="string") throw "url property should be of string type in call to ajax";
+
+let methodType="GET";
+if(jsonObject["methodType"])
+{
+methodType=jsonObject["methodType"];
+if(typeof methodType!="string") throw "methodType property should be of string type in call to ajax";
+methodType=methodType.toUpperCase();
+if(!["POST","GET"].includes(methodType)) throw "methodType should be GET/POST in call to ajax";
+}
+
+let onSuccess=null;
+if(jsonObject["success"])
+{
+onSuccess=jsonObject["success"];
+if((typeof onSuccess)!="function") throw "value of success property must be of function type in call to ajax";
+}
+
+let onFailure=null;
+if(jsonObject["failure"])
+{
+onFailure=jsonObject["failure"];
+if((typeof onFailure)!="function") throw "value of failure property must be of function type in call to ajax";
+}
+
+if(methodType=="GET")
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData=this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
+alert(methodType);
+alert(url);
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+}
+if(methodType=="POST")
+{
+
+}
+
+
+}
+//TMJRock part ends here
+function populateDesignations()
+{
+$$$.ajax({
+"url": "servletOne",
+"methodType": "GET",
+"success": function(responseData){
+var designations=JSON.parse(responseData);
+$$$("designationsComboBox").fillComboBox({
+"dataSource": designations,
+"text":"title",
+"value":"code",
+"firstOption":{
+"text":"<select designation>",
+"value":"-1"
+}
+});
+},
+"failure": function(){
+alert('Some Problem');
+}
+});
+}
+window.addEventListener('load',populateDesignations);
+</script>
+</head>
+<body>
+<h2>Get type example</h2>
+<select id='designationsComboBox'>
+</select>
+</body>
+</html>

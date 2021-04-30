@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>AJAX Example</title>
+<script src='jquery.js'></script>
+<script>
+function getDesignation()
+{
+let titleSpan=$("#title");
+titleSpan.html("");
+let code=$("#code").val();
+$.ajax({
+"url": "servletTwo",
+"data":{
+"code": code
+},
+"type": "GET",
+"complete" : function(){alert("Complete")},
+"success": function(responseData){
+alert(responseData.title);
+if(responseData!="INVALID")
+{
+var designationDTO=responseData;
+titleSpan.html(designationDTO.title);
+}
+else
+{
+alert("Invalid designation code");
+}
+},
+"error": function(){
+alert("Some problem");
+}
+});
+}
+$(()=>{
+$(document).ajaxStart(function(){alert("Called ajaxStart's function")});
+});
+</script>
+</head>
+<body>
+<h2>Get type example with data</h2>
+Enter code: <input type='text' id='code'>
+<button type='button' onclick='getDesignation()'>Get Designation</button> <br>
+title: <span id='title'></span>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Ecample</title>
+<script>
+function doSomething()
+{
+var elements=document.body.childNodes;
+for(element of elements)
+{
+//if(element.nodeName=="#text") continue;
+var att=element.attributes;
+alert(att.nodeName);
+var aa=att.getNamedItem("tm");
+if(aa!=null && aa.value=="Yes") alert(document.getElementById(att.getNamedItem("id").value).innerHTML);
+}
+}
+</script>
+</head>
+<body>
+<div id='whatever1' tm="Yes">
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+</div>
+<div id="something">
+Something Something
+</div>
+<div id="whatever2" tm="Yes">
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+</div>
+<div id="whatever3" tm="No">
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+</div>
+<button onClick='doSomething()'>Do Something</button>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>AJAX Example</title>
+<script src="jquery.js"></script>
+<script>
+function saveEnquiry()
+{
+var whatever=$("#whatever");
+var firstName=$("#firstName").val().trim();
+var lastName=$("#lastName").val().trim();
+var age=$("#age").val().trim();
+var costomer={
+"firstName": firstName,
+"lastName" : lastName,
+"age" : age
+};
+$.ajax({
+"url": "servletThree",
+"type": "POST",
+"data": JSON.stringify(costomer),
+"dataType": "json",
+"success": function(responseData){
+let costumer=responseData;
+var a="First Name: "+costomer.firstName+"<br>";
+a+="Last Name: "+costomer.lastName+"<br>";
+a+="Age: "+costomer.age;
+whatever.html(a);
+},
+"error": function(){
+alert('Some Problem');
+}
+});
+}
+</script>
+</head>
+<body>
+<h2>Post type request example with data</h2>
+First Name: <input type='text' id='firstName'><br>
+Last Name: <input type='text' id='lastName'><br>
+Age: <input type='text' id='age'><br>
+<button type='button' onclick='saveEnquiry()'>Save</button> <br>
+<div id='whatever'></div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Whatever</title>
+</head>
+<style>
+.modalMask
+{
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+position: fixed;
+background: gray;
+opacity: 70%;
+}
+.modal
+{
+width: 400px;
+height: 300px;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+margin:auto;
+position:fixed;
+background:blue;
+border: 1px solid white;
+border-radius: 10px 10px;
+}
+.closeButton
+{
+float:right;
+font-size:32px;
+margin-right:5px;
+margin-top:-5px;
+cursor:pointer;
+}
+</style>
+<script>
+var $$$={
+"modals": {}
+}
+
+// I also could have done $$$.modals["show"]=function(mid){}
+$$$.modals.show=function(mid){
+var modal;
+for(let i=0;i<ds.modals.length;i++)
+{
+if(ds.modals[i].getContentId()==mid)
+{
+modal=ds.modals[i];
+break;
+}
+}
+if(modal==null) return;
+modal.show();
+};
+
+var ds={
+"modals" : []
+};
+
+//following is a class
+function Modal(cref)
+{
+var objectAddress=this;
+this.beforeOpenng=null;
+this.afterOpening=null;
+this.beforeClosing=null;
+this.afterClosing=null;
+var contentReference=cref;
+
+this.getContentId=function(){
+return contentReference.id;
+}
+
+var modalMaskDivision=document.createElement('div');
+modalMaskDivision.classList.add('modalMask');
+modalMaskDivision.style.display='none';
+var modalDivision=document.createElement('div');
+modalDivision.classList.add('modal');
+modalDivision.style.display='none';
+document.body.appendChild(modalMaskDivision);
+document.body.appendChild(modalDivision);
+
+
+if(contentReference.hasAttribute("size"))
+{
+let size=contentReference.getAttribute("size");
+let xpos=size.indexOf('x');
+if(xpos==-1) xpos=size.indexof('X');
+if(xpos==-1) throw "In case of modal size it should be specified as widthxheight";
+if(xpos==0 || xpos==size.length-1) throw "In case of modal size it should be specified as widthxheight";
+let width=parseInt(size.substring(0,xpos))+10;
+let height=parseInt(size.substring(xpos+1))+85;
+modalDivision.style.width=width+"px";
+modalDivision.style.height=height+"px";
+}
+else
+{
+modalDivision.style.width="300px";
+modalDivision.style.height="300px";
+}
+
+let headerDivision=document.createElement("div");
+headerDivision.style.marginRight="0";
+headerDivision.style.height="40px";
+headerDivision.style.background="red";
+headerDivision.style.padding="5px";
+headerDivision.style.borderRadius="10px 10px 0px 0px";
+headerDivision.style.borderBottom='3px solid black';
+headerDivision.classList.add('header');
+modalDivision.appendChild(headerDivision);
+
+
+
+if(contentReference.hasAttribute("header"))
+{
+headerDivision.innerHTML=contentReference.getAttribute("header");
+}
+
+
+let contentDivision=document.createElement('div');
+contentDivision.style.height=(modalDivision.style.height.substring(0,modalDivision.style.height.length-2)-110)+"px";
+//contentDivision.style.width="100%";
+contentDivision.style.padding="5px";
+contentDivision.style.overflow="auto";
+contentReference.remove();
+contentReference.style.display='block';
+contentReference.style.visibility='visible';
+contentDivision.appendChild(contentReference);
+modalDivision.appendChild(contentDivision);
+
+let footerDivision=document.createElement('div');
+footerDivision.classList.add('footer');
+footerDivision.style.left="0";
+footerDivision.style.right="0";
+footerDivision.style.height="40px";
+footerDivision.style.position="absolute";
+footerDivision.style.bottom="0";
+footerDivision.style.padding="5px";
+footerDivision.style.background='pink';
+footerDivision.style.borderTop='3px solid black';
+footerDivision.style.borderRadius=' 0px 0px 10px 10px';
+modalDivision.appendChild(footerDivision);
+
+if(contentReference.hasAttribute("footer"))
+{
+footerDivision.innerHTML=contentReference.getAttribute("footer");
+}
+
+var closeButtonSpan;
+if(contentReference.hasAttribute("closeButton"))
+{
+if(contentReference.getAttribute("closeButton").toUpperCase()=="TRUE")
+{
+closeButtonSpan=document.createElement('span');
+closeButtonSpan.classList.add('closeButton');
+closeButtonSpan.appendChild(document.createTextNode('x'));
+closeButtonSpan.onclick=function(){
+let closeModal=true;
+if(objectAddress.beforeClosing)
+{
+closeModal=eval(objectAddress.beforeClosing);
+}
+if(closeModal)
+{
+modalDivision.style.display='none';
+modalMaskDivision.style.display='none';
+if(objectAddress.afterClosing) setTimeout(function(){eval(objectAddress.afterClosing);},100);
+}
+};
+headerDivision.appendChild(closeButtonSpan);
+}
+}
+
+
+if(contentReference.hasAttribute("maskColor"))
+{
+modalMaskDivision.style.background=contentReference.getAttribute("maskColor");
+}
+if(contentReference.hasAttribute("modalBackgroundColor"))
+{
+modalDivision.style.background=contentReference.getAttribute("modalBackgroundColor");
+}
+
+if(contentReference.hasAttribute("beforeOpening"))
+{
+this.beforeOpening=(contentReference.getAttribute("beforeOpening"));
+}
+if(contentReference.hasAttribute("afterOpening"))
+{
+this.afterOpening=(contentReference.getAttribute("afterOpening"));
+}
+if(contentReference.hasAttribute("beforeClosing"))
+{
+this.beforeClosing=(contentReference.getAttribute("beforeClosing"));
+}
+if(contentReference.hasAttribute("afterClosing"))
+{
+this.afterClosing=(contentReference.getAttribute("afterClosing"));
+}
+
+
+
+this.show=function(){
+let openModal=true;
+if(this.beforeOpening)
+{
+openModal=eval(this.beforeOpening);
+}
+if(openModal)
+{
+modalDivision.style.display='block';
+modalMaskDivision.style.display='block';
+if(this.afterOpening) setTimeout(function(){eval(objectAddress.afterOpening);},100);
+}
+}
+}
+
+function abBeforeOpening()
+{
+alert("mpdal with ab is about to open");
+return true;
+}
+function abOpened()
+{
+alert('modal with ab opened');
+}
+function abBeforeClosing()
+{
+alert("modal with ab is about to close");
+return true;
+}
+function abClosed()
+{
+alert('modal with ab closed');
+}
+
+function createModal1()
+{
+$$$.modals.show("ab");
+//$$$("ab").show();
+}
+
+
+function loader()
+{
+var all=document.getElementsByTagName("*");
+for(let i=0;i<all.length;i++)
+{
+if(all[i].hasAttribute("forModal"))
+{
+if(all[i].getAttribute("forModal").toUpperCase()=='TRUE')
+{
+all[i].setAttribute("forModal","false");
+ds.modals[ds.modals.length]=new Modal(all[i]);
+i--;
+}
+}
+}
+}
+window.addEventListener('load',loader);
+
+function xyz()
+{
+var name=document.getElementById("nm");
+alert(name);
+}
+</script>
+<body>
+<button type='button' onclick='createModal1()'>Show first Modal</button>
+<div id='ab' forModal='true' style='display:none' header="Some Heading" footer="Some footer" size="600x300" closeButton=true maskColor="grey" modalBackgroundColor="#549933" beforeOpening="abBeforeOpening()" afterOpening="abOpened()" beforeClosing="abBeforeClosing()" afterClosing="abClosed()" >
+God is great<br>
+God is great<br>
+God is great<br>
+God is great<br>
+<input type="text" id="nm" value="Gopal"><br>
+God is great<br>
+God is great<br>
+God is great<br>
+God is great
+Last line
+</div>
+<button onclick='xyz()'>Click me</button>
+</body>
+</html>

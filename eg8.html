@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Whatever</title>
+</head>
+<style>
+.modalBackgroundClass
+{
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+position: fixed;
+background: gray;
+opacity: 70%;
+}
+.modalClass
+{
+width:400px;
+height:300px;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+margin:auto;
+position:fixed;
+background:blue;
+border: 1px solid white
+}
+.crossButtonClass
+{
+float:right;
+font-size:32px;
+margin-right:5px;
+margin-top:-5px;
+cursor:pointer;
+}
+</style>
+<script>
+function showIt()
+{
+var modalBackground=document.createElement('div');
+modalBackground.classList.add('modalBackgroundClass');
+document.body.appendChild(modalBackground);
+var modal=document.createElement('div');
+modal.classList.add('modalClass');
+var crossButton=document.createElement('span');
+crossButton.classList.add('crossButtonClass');
+var t=document.createTextNode('x');
+crossButton.appendChild(t);
+modal.appendChild(crossButton);
+document.body.appendChild(modal);
+}
+</script>
+<body>
+<button type='button' onclick='showIt()'>Show it</button>
+</body>
+</html>

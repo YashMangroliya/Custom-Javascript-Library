@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Ecample</title>
+<script>
+//TMJRock part starts here
+function $$$(){
+
+}
+$$$.onDocumentLoaded=function(func){
+window.addEventListener('load',func);
+};
+$$$.toAccordian=function(id){
+//alert(getElementById(id).childNodes);
+//alert(getElementById(id).querySelectorAll('*'));
+var childrens=document.getElementById(id).children;
+var heading;
+var accordianPane;
+for(var i=0;i<childrens.length;i++)
+{
+heading=childrens[i];
+if(heading.nodeName!="H3") continue;
+accordianPane=childrens[i+1];
+accordianPane.style.display='none';
+var fn=function(cld,index){
+return function(){
+var clds=cld;
+var ind=index;
+for(var k=1;k<clds.length;k++)
+{
+if(cld[k-1].nodeName!="H3") continue;
+if(k!=ind) clds[k].style.display='none';
+else 
+{
+if(clds[k].style.display=="none") clds[k].style.display="block";
+else clds[k].style.display="none";
+}
+}
+};
+};
+heading.addEventListener('click',fn(childrens,i+1),false);
+}
+};
+//TMJRock part ends here
+
+//TMJRock user part starts here
+$$$.onDocumentLoaded(function(){
+$$$.toAccordian("mymy");
+});
+</script>
+</head>
+<body>
+<div id='mymy'>
+<h3>Heading1</h3>
+<div>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+</div>
+<div>
+Something Something
+</div>
+<h3>Heading2</h3>
+<div>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+</div>
+<h2>Something</h2>
+<h3>Heading3</h3>
+<div>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+</div>
+</div>
+</body>
+</html>

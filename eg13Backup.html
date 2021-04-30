@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMGrid Prototype</title>
+<style>
+.tmjrock_tmgrid_header_division
+{
+overflow-x: auto;
+overflow-y: auto;
+}
+.tmjrock_tmgrid_body_division
+{
+overflow-x: auto;
+overflow-y: auto;
+width: 370px;
+height: 377px;
+}
+.tmjrock_tmgrid_head
+{
+border: 1px groove green;
+border-bottom: 0px;
+border-spacing: 0px;
+border-collapse: collapse;
+background: lightgray;
+}
+.tmjrock_tmgrid_head td
+{
+border: 1px groove green;
+border-bottom: 0px;
+width: 50px;
+}
+.tmjrock_tmgrid_head td+td
+{
+width: 100px;
+text-align: left
+}
+.tmjrock_tmgrid_head td+td+td
+{
+width: 100px;
+text-align: left
+}
+.tmjrock_tmgrid_head td+td+td+td
+{
+width: 100px;
+text-align: left
+}
+.tmjrock_tmgrid_head td+td+td+td+td
+{
+width: 100px;
+text-align: left
+}
+.tmjrock_tmgrid_body
+{
+border: 1px groove red;
+border-spacing: 0px;
+border-collapse: collapse;
+}
+.tmjrock_tmgrid_body td
+{
+border: 1px groove red;
+width: 50px;
+text-align: right
+}
+.tmjrock_tmgrid_body td+td
+{
+width: 100px;
+text-align: left
+}
+.tmjrock_tmgrid_body td+td+td
+{
+width: 100px;
+text-align: left
+}
+.tmjrock_tmgrid_body td+td+td+td
+{
+width: 100px;
+text-align: left
+}
+.tmjrock_tmgrid_body td+td+td+td+td
+{
+width: 100px;
+text-align: left
+}
+</style>
+<!-- tmjrock specific styling starts here
+<!-- user specific styling starts here-->
+<style>
+.someStyle
+{
+width: 800px;
+height: 400px;
+border-width: 4px;
+border-style: groove;
+overflow: auto
+}
+</style>
+</head>
+<script>
+class Students
+var students=new Array();
+function loader()
+{
+
+}
+window.addEventListener('load',loader);
+</script>
+<body>
+<div class='someStyle'>
+<div class='tmjrock_tmgrid_header_division'>
+<table class='tmjrock_tmgrid_head'>
+<tr>
+<td>S No.</td>
+<td>Roll No.</td>
+<td>Name</td>
+<td>Mother</td>
+<td>Father</td>
+</tr>
+</table>
+</div>
+<div class='tmjrock_tmgrid_body_division'>
+<table class='tmjrock_tmgrid_body'>
+</table>
+</div>
+</div>
+</body>
+</html>

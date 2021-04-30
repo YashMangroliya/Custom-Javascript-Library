@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Ecample</title>
+<script>
+//In this part TMJRock programmer should do something
+function $$$(){
+
+}
+$$$.onDocumentLoaded=function(func){
+window.addEventListener('load',func);
+}
+$$$.paginationButtonOnClick=function(index,tableDivId){
+return function(){
+var tableDiv=document.getElementById(tableDivId);
+var childNodes=tableDiv.childNodes;
+for(child of childNodes)
+{
+if(child.id==index) child.style.display='block';
+else if(child.isTable) child.style.display='none';
+}
+};
+}
+$$$.grid=function(tableDivId,dict){
+if(dict.pagination)
+{
+var m=Math.ceil(dict.model.getRowCount()/dict.pageSize);
+var i=0;
+var j=0;
+var paginationDiv=document.createElement('div');
+var paginationButton;
+var table;
+var tr;
+var th;
+var td;
+var headings;
+var pageSize=dict.pageSize;
+var serialNumber=0;
+var columns=dict.model.getColumnCount();
+while(i<m)
+{
+table=document.createElement('table');
+table.border='1';
+table.id=i;
+table.isTable=true;
+table.style.display='none';
+table.style.border='1px solid black';
+tr=document.createElement('tr');
+th=document.createElement('th');
+th.innerHTML="S.No.";
+th.style.width='60px';
+th.style["text-align"]='center';
+tr.appendChild(th);
+j=0;
+headings=dict.model.getColumnHeadings();
+while(j<dict.model.getColumnCount())
+{
+th=document.createElement('th');
+th.innerHTML=headings[j];
+th.style.width='200px';
+th.style["text-align"]='center';
+tr.appendChild(th);
+j++;
+}
+table.appendChild(tr);
+
+var rowsAdded=0;
+var k;
+var obj;
+var totalEntities=dict.model.getRowCount();
+while(rowsAdded<pageSize && serialNumber<totalEntities)
+{
+tr=document.createElement('tr');
+td=document.createElement('td');
+td.innerHTML=serialNumber+1;
+tr.appendChild(td);
+k=0;
+//alert(dict.model.data);
+obj=dict.model.data[serialNumber];
+while(k<columns)
+{
+td=document.createElement('td');
+td.innerHTML=obj[headings[k]];
+tr.appendChild(td);
+k++;
+}
+table.appendChild(tr);
+serialNumber++;
+rowsAdded++;
+}
+var tableDiv=document.getElementById(tableDivId);
+tableDiv.appendChild(table);
+paginationButton=document.createElement('button');
+paginationButton.innerHTML=i+1;
+paginationButton.style.float='left';
+paginationButton.style.padding='8px 16px';
+paginationButton.onclick=$$$.paginationButtonOnClick(i,tableDivId);
+paginationDiv.appendChild(paginationButton);
+i++;
+}
+paginationDiv.style["text-align"]='center';
+document.body.insertBefore(paginationDiv,tableDiv);
+document.body.insertBefore(document.createElement('br'),tableDiv);
+document.body.insertBefore(document.createElement('br'),tableDiv);
+}
+}
+//Following code is being written by TMJRock user
+function DataModel()
+{
+this.data=null;
+this.getRowCount=function(){
+if(this.data==null) return 0;
+else return this.data.length;
+}
+this.getColumnCount=function(){
+if(this.data==null) return 0;
+else return Object.keys(this.data[0]).length;
+}
+this.getColumnHeadings=function(){
+if(this.data==null) return 0;
+else return Object.keys(this.data[0]);
+}
+//many more functions
+}
+var myDataModel=new DataModel();
+function whatever()
+{
+
+var employees=[{
+"name":"Yash",
+"designation":"clerk",
+"fatherName":"Mr. Pavan",
+"motherName": "Mrs. Manju"
+},
+{
+"name":"Yasha",
+"designation":"Manager",
+"fatherName":"Mr. Shyan",
+"motherName": "Mrs. Manju"
+},
+{
+"name":"Raju",
+"designation":"Cashier",
+"fatherName":"Mr. Rajesh",
+"motherName": "Mrs. Ranjeeta"
+},
+{
+"name":"Yash1",
+"designation":"clerk1",
+"fatherName":"Mr. Pavan1",
+"motherName": "Mrs. Manju1"
+},
+{
+"name":"Yash2",
+"designation":"clerk2",
+"fatherName":"Mr. Pavan2",
+"motherName": "Mrs. Manju2"
+},
+{
+"name":"Yash3",
+"designation":"clerk3",
+"fatherName":"Mr. Pavan3",
+"motherName": "Mrs. Manju3"
+},
+{
+"name":"Yash4",
+"designation":"clerk4",
+"fatherName":"Mr. Pavan4",
+"motherName": "Mrs. Manju4"
+},
+{
+"name":"Yash5",
+"designation":"clerk5",
+"fatherName":"Mr. Pavan5",
+"motherName": "Mrs. Manju5"
+},
+{
+"name":"Yash6",
+"designation":"clerk6",
+"fatherName":"Mr. Pavan6",
+"motherName": "Mrs. Manju6"
+},
+{
+"name":"Yash7",
+"designation":"clerk7",
+"fatherName":"Mr. Pavan7",
+"motherName": "Mrs. Manju7"
+},
+{
+"name":"Yash8",
+"designation":"clerk8",
+"fatherName":"Mr. Pavan8",
+"motherName": "Mrs. Manju8"
+},
+{
+"name":"Yash9",
+"designation":"clerk9",
+"fatherName":"Mr. Pavan9",
+"motherName": "Mrs. Manju9"
+},
+{
+"name":"Yash10",
+"designation":"clerk10",
+"fatherName":"Mr. Pavan10",
+"motherName": "Mrs. Manju10"
+}
+];
+myDataModel.data=employees;
+//code to populate myDataModel with data (list of objects)
+}
+function doSomething()
+{
+whatever();
+$$$.grid('someDiv',{
+"model" : myDataModel,
+"pagination" : true,
+"pageSize": 5,
+"rowSelectionEnabled": true
+});
+}
+$$$.onDocumentLoaded(doSomething);
+</script>
+</head>
+<body>
+<h3>Pagination Example</h3>
+<div id="someDiv">
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<title>JQuery Examples</title>
+<meta charset='utf-8'>
+<script src='jquery.js'></script>
+<script>
+$(()=>{
+$.ajax({
+"url": "servletOne",
+"type": "GET",
+"dataType": "json",
+"success": function(responseData){
+for(i of responseData) alert(i.title);
+},
+"beforeSend" : function(){
+alert("Sending request")
+},
+"complete" : function(){
+alert("Process completed")
+}
+});
+
+});
+</script>
+</head>
+<body>
+</body>
+</html>

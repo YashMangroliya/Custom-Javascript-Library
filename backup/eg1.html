@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Ecample</title>
+<script>
+function $$$(parameter){
+var element=document.getElementById(parameter);
+var elementType=element.nodeName
+if(elementType=="SELECT")
+{
+return {
+"fillComboBox":function(dict){
+var obj;
+var dataSource=dict.dataSource
+if(dict.firstOption!=null)
+{
+obj=document.createElement('option');
+obj.value=dict.firstOption.value;
+obj.text=dict.firstOption.text;
+element.appendChild(obj);
+}
+var text=dict.text;
+var value=dict.value;
+for(var i=1;i<dataSource.length;i++)
+{
+obj=document.createElement('option');
+obj.text=dataSource[i][text];
+obj.value=dataSource[i][value];
+element.appendChild(obj);
+}
+}
+};
+}
+}
+
+
+$$$.ajax=function(dict){
+if(dict.url!="servletOne") dict.failure();
+if(dict.methodType!="GET" && dict.methodType!="POST") dict.failure();
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData=this.responseText;
+dict.success(responseData);
+}
+else
+{
+dict.failure();
+}
+}
+};
+xmlHttpRequest.open(dict.methodType,dict.url,true);
+xmlHttpRequest.send();
+}
+function populateDesignations()
+{
+$$$.ajax({
+"url": "servletOne",
+"methodType": "GET",
+"success": function(responseData){
+var designations=JSON.parse(responseData);
+$$$("designationsComboBox").fillComboBox({
+"dataSource": designations,
+"text":"title",
+"value":"code",
+"firstOption":{
+"text":"<select designation>",
+"value":"-1"
+}
+});
+},
+"failure": function(){
+alert('Some Problem');
+}
+});
+}
+window.addEventListener('load',populateDesignations);
+</script>
+</head>
+<body>
+<h2>Get type example</h2>
+<select id='designationsComboBox'>
+</select>
+</body>
+</html>

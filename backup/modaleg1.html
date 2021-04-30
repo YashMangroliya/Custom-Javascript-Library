@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Ecample</title>
+<script>
+//TMJRock part starts here.
+function $$$(parameter){
+
+}
+
+$$$.modal=function(id){
+if(document.getElementById("backgroundDiv")==null)
+{
+var backgroundDiv=document.createElement("div");
+backgroundDiv.id="backgroundDiv";
+backgroundDiv.style.display='block';
+backgroundDiv.style.position='fixed';
+backgroundDiv.style.width="100vw";
+backgroundDiv.style.height="100vh";
+backgroundDiv.style.backgroundColor='#E0E0E0';
+backgroundDiv.style.opacity=".7";
+backgroundDiv.style.left="0px";
+backgroundDiv.style.top="0px";
+var modalDiv=document.createElement("div");
+modalDiv.id="modalDiv";
+modalDiv.style.display='block';
+modalDiv.style.position='fixed';
+modalDiv.style.left="30vw";
+modalDiv.style.top="36vh";
+modalDiv.style.width="35vw";
+modalDiv.style.height="35vh";
+modalDiv.style.backgroundColor='#686864';
+var crossButton=document.createElement("BUTTON");
+crossButton.id="crossButton";
+crossButton.style.float='right';
+crossButton.style.width="25px";
+crossButton.style.height="21px";
+crossButton.style.backgroundColor='#222222';
+crossButton.innerHTML="<image style='float:right;width:10px;height:10px' src='images/crossIcon.png' />";
+crossButton.onclick=function()
+{
+var backgroundDiv=document.getElementById('backgroundDiv');
+backgroundDiv.style.display='none';
+var modalDiv=document.getElementById('modalDiv');
+var modalContentDiv=document.getElementById(id);
+modalDiv.style.display='none';
+document.body.appendChild(modalContentDiv);
+};
+modalDiv.appendChild(crossButton);
+modalDiv.appendChild(document.getElementById(id));
+document.body.appendChild(backgroundDiv);
+document.body.appendChild(modalDiv);
+}
+else
+{
+document.getElementById("crossButton").onclick=function()
+{
+var backgroundDiv=document.getElementById('backgroundDiv');
+backgroundDiv.style.display='none';
+var modalDiv=document.getElementById('modalDiv');
+var modalContentDiv=document.getElementById(id);
+modalDiv.style.display='none';
+document.body.appendChild(modalContentDiv);
+};
+document.getElementById("backgroundDiv").style.display="block";
+var modalDiv=document.getElementById("modalDiv");
+modalDiv.style.display="block";
+modalDiv.appendChild(document.getElementById(id));
+}
+};
+
+//TMJRock part ends here.
+
+
+// This code is written by TMJRock user
+function showXYZ()
+{
+$$$.modal("xyz");
+}
+function showPQR()
+{
+$$$.modal("pqr");
+}
+</script>
+</head>
+<body>
+<h1>This is modal example</h1>
+<Button onclick='showXYZ()'>XYZ</Button>
+<Button onclick='showPQR()'>PQR</Button>
+<div id='xyz'>
+<b>Cool</b>
+<h1>Whatever</h1>
+Great
+</div>
+
+<table id='pqr'>
+<tr><td>Whatever1</td><td>Whatever11</td></tr>
+<tr><td>Whatever2</td><td>Whatever22</td></tr>
+<tr><td>Whatever3</td><td>Whatever33</td></tr>
+<tr><td>Whatever4</td><td>Whatever44</td></tr>
+<tr><td>Whatever5</td><td>Whatever55</td></tr>
+<tr><td>Whatever6</td><td>Whatever66</td></tr>
+</table>
+</body>
+</html>

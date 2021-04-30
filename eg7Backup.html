@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJRock Example</title>
+<script>
+//TMJRock part starts here
+
+function $$$(cid){
+let element=document.getElementById(cid);
+if(!element) throw "Invalid id: "+cid;
+return new TMJRockElement(element);
+};
+
+$$$.model={
+"onStartup": [],
+"accordians": []
+};
+
+
+$$$.accordianHeadingClicked=function(panelIndex,accordianIndex)
+{
+if($$$.model.accordians[accordianIndex].expandedIndex!=-1) $$$.model.accordians[accordianIndex].panels[$$$.model.accordians[accordianIndex].expandedIndex].style.display='none';
+$$$.model.accordians[accordianIndex].panels[panelIndex+1].style.display=$$$.model.accordians[accordianIndex].panels[panelIndex+1].oldDisplay;
+$$$.model.accordians[accordianIndex].expandedIndex=panelIndex+1;
+}
+
+$$$.toAccordian=function(aid)
+{
+let expandedIndex=-1;
+let panels=[];
+let accord=document.getElementById(aid);
+var childrens=accord.childNodes;
+let x;
+for(x=0;x<childrens.length;x++)
+{
+if(childrens[x].nodeName=="H3")
+{
+panels[panels.length]=childrens[x];
+}
+if(childrens[x].nodeName=="DIV")
+{
+panels[panels.length]=childrens[x];
+}
+}
+if(panels.length%2!=0) throw "Heading and division malformed to create accordian";
+for(x=0;x<panels.length;x+=2)
+{
+if(panels[x].nodeName!="H3") throw "Heading and division malformed to create accordian";
+if(panels[x+1].nodeName!="DIV") throw "Exception in serial in DIV";
+}
+
+function createClickHandler(panelIndex,accordianIndex)
+{
+return function(){
+$$$.accordianHeadingClicked(panelIndex,accordianIndex);
+};
+}
+
+let accordianIndex=$$$.model.accordians.length;
+for(x=0;x<panels.length;x+=2)
+{
+panels[x].onclick=createClickHandler(x,accordianIndex);
+panels[x+1].oldDisplay=panels[x+1].style.display;
+panels[x+1].style.display="none";
+}
+let accordian={
+"expandedIndex": -1,
+"panels": panels
+};
+$$$.model.accordians[accordianIndex]=accordian;
+}
+
+$$$.onDocumentLoaded=function(func){
+if((typeof func)!="function") throw "Expected function, found "+typeof(func)+" in call to onDocumentLoaded";
+$$$.model.onStartup[$$$.model.onStartup.length]=func;
+}
+
+$$$.initFrameWork=function(){
+let x=0;
+while(x<$$$.model.onStartup.length)
+{
+$$$.model.onStartup[x]();
+x++;
+}
+}
+
+window.addEventListener('load',function(){
+$$$.initFrameWork();
+});
+
+
+
+function TMJRockElement(element){
+this.element=element;
+this.html=function(content){
+if(typeof this.element.innerHTML=="string")
+{
+if(typeof content=="string")
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+} 	
+return null;
+}
+this.value=function(content){
+if(typeof this.element.value)
+{
+if(content)
+{
+this.element.value=content;
+}
+return this.element.value;
+}
+return null;
+}
+
+this.fillComboBox=function(jsonObject){
+if((this.element.nodeName)!="SELECT") throw "fillComboBox can be called on a SELECT type object only";
+
+let dataSource=jsonObject["dataSource"];
+if(!dataSource) throw "dataSorce property should exist in call to ajax";
+if(!(dataSource instanceof Array)) throw "Value of dataSource property should be of collection type";
+if(dataSource.length==0) throw "Length of collection against dataSource property can not be 0";
+
+let text=jsonObject["text"];
+if(!text) throw "text property should exist in call to ajax";
+if((typeof text)!="string") throw "text property should be string of type in call to ajax";
+if(!dataSource[0][text]) throw "value of text property should exist as a property in elements of collection against dataSource property";
+
+let value=jsonObject["value"]; 
+if(!value) throw "value propety should exist in call to ajax";
+if((typeof value)!="string") throw "value property should be of string type in call to ajax";
+if(!dataSource[0][value]) throw "value of value property should exist as a property in elements of collection against dataSource property";
+
+let length=this.element.length;
+for(let i=length-1;i>=0;i--)
+{
+this.element.remove(i);
+}
+
+let firstOption=jsonObject["firstOption"];
+if(firstOption)
+{
+let firstOptionText=firstOption["text"];
+if(!firstOptionText) throw "text property should exist in json against firstOption property in call to ajax";
+if((typeof firstOptionText)!="string") throw "text property in json object against firstOption property should be of string type in call to ajax";
+
+let firstOptionValue=firstOption["value"];
+if(!firstOptionValue) throw "Value property should exist in json against firstOption property in call to ajax";
+if((typeof firstOptionValue)!="string") throw "Value property in json object against firstOption property should be of string type in call to ajax";
+
+let obj=document.createElement('option');
+obj.text=firstOptionText;
+obj.value=firstOptionValue;
+this.element.appendChild(obj)
+}
+
+length=dataSource.length;
+for(let i=0;i<length;i++)
+{
+obj=document.createElement('option');
+obj.text=dataSource[i][text];
+obj.value=dataSource[i][value];
+this.element.appendChild(obj);
+}
+
+}// fillComboBox ends here
+
+}
+
+
+$$$.ajax=function(jsonObject){
+if(!jsonObject["url"]) throw "url property is missing in call to ajax";
+let url=jsonObject["url"];
+if((typeof url)!="string") throw "url property should be of string type in call to ajax";
+
+let methodType="GET";
+if(jsonObject["methodType"])
+{
+methodType=jsonObject["methodType"];
+if(typeof methodType!="string") throw "methodType property should be of string type in call to ajax";
+methodType=methodType.toUpperCase();
+if(!["POST","GET"].includes(methodType)) throw "methodType should be GET/POST in call to ajax";
+}
+
+let onSuccess=null;
+if(jsonObject["success"])
+{
+onSuccess=jsonObject["success"];
+if((typeof onSuccess)!="function") throw "value of success property must be of function type in call to ajax";
+}
+
+let onFailure=null;
+if(jsonObject["failure"])
+{
+onFailure=jsonObject["failure"];
+if((typeof onFailure)!="function") throw "value of failure property must be of function type in call to ajax";
+}
+
+if(methodType=="GET")
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData=this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
+// we will change the code to traverse the json object
+if(jsonObject["data"])
+{
+let jsonData=jsonObject["data"];
+let queryString="";
+let i=0;
+for(key in jsonData)
+{
+if(i==0)queryString+="?";
+if(i>0) queryString+="&";
+i++;
+queryString=queryString+encodeURI(key)+"="+encodeURI(jsonData[key]);
+}
+url+=queryString;
+alert(url);
+}
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+}
+if(methodType=="POST")
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData=this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
+// we will change the code to traverse the json object
+
+if(jsonObject["data"])
+{
+let sendJSON=jsonObject["sendJSON"];
+if((typeof sendJSON)!="boolean") throw "sendJSON property should be of boolean type in call to ajax";
+if(!sendJSON) sendJSON=false;
+if(sendJSON)
+{
+let jsonData={};
+jsonData=jsonObject["data"];
+xmlHttpRequest.open('POST',url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(jsonData));
+}
+else
+{
+let jsonData=jsonObject["data"];
+let queryString="";
+let i=0;
+for(key in data)
+{
+if(i>0) queryString+="&";
+i++;
+queryString=queryString+encodeURI(key)+"="+encodeURI(data[key]);
+}
+xmlHttpRequest.open('POST',url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","? f??????????????????");
+xmlHttpRequest.send(queryString);
+}
+}
+}
+}
+
+//TMJRock part ends here
+
+$$$.onDocumentLoaded(function(){
+$$$.toAccordian("mymy");
+$$$.toAccordian("gogo");
+});
+</script>
+</head>
+<body>
+<div id='mymy'>
+<h3>Heading1</h3>
+<div>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+</div>
+<h3>Heading2</h3>
+<div>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+</div>
+<h3>Heading3</h3>
+<div>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+</div>
+</div>
+
+<div id='gogo'>
+<h3>Heading11</h3>
+<div>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+Whatever whatever whatever1<br>
+</div>
+<h3>Heading22</h3>
+<div>
+Whatever whatever whatever2<br>
+Whateve0r whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+Whatever whatever whatever2<br>
+</div>
+<h3>Heading33</h3>
+<div>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+Whatever whatever whatever3<br>
+</div>
+</div>
+
+</body>
+</html>
